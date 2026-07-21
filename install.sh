@@ -15,6 +15,18 @@
 #   (repo: https://github.com/whopio/whop-public-cli).
 #   Installing from npm lets you review the package and its version
 #   instead of piping a remote script straight into a shell.
+#
+# Network egress requirement:
+#   Installing the CLI only needs access to the npm registry
+#   (registry.npmjs.org). Actually *using* it — `whop auth login`,
+#   `whop quickstart`, and every other command — talks to Whop's API at
+#   https://api.whop.com. In sandboxed or allowlist-restricted
+#   environments (CI runners, remote dev containers) that host is often
+#   blocked, and the CLI reports it as:
+#       HTTP_403: Host not in allowlist: api.whop.com
+#   If you hit that, add `api.whop.com` (and `whop.com`) to the
+#   environment's network egress allowlist, or run the CLI from a machine
+#   with unrestricted outbound access.
 
 set -eu
 
@@ -66,6 +78,8 @@ fi
 if command -v whop >/dev/null 2>&1; then
   ok "Whop CLI ready: $(whop --version)"
   info "Next step: run 'whop quickstart' to get started."
+  info "Note: CLI commands reach Whop at api.whop.com — if that host is blocked"
+  info "      (HTTP_403 'Host not in allowlist'), allowlist it or use an unrestricted machine."
 else
   warn "Installed, but 'whop' is not on your PATH yet."
   warn "Add your npm global bin directory to PATH:"
