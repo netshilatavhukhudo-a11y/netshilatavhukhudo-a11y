@@ -124,6 +124,15 @@ availability:
 
 ---
 
+## 🧰 Repository Tooling
+
+This repo also carries setup tooling for the [Whop CLI](https://github.com/whopio/whop-public-cli) (`whop`):
+
+- **[`install.sh`](install.sh)** — installs the official `@whop/cli` via npm, with prerequisite checks.
+- **[`SETUP.md`](SETUP.md)** — blueprint for running the Whop CLI from Claude Code (cloud network allowlist, authentication, and local setup).
+
+---
+
 ## 📫 Connect & Collaborate
 
 <div align="center">
