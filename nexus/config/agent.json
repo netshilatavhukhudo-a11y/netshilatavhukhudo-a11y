@@ -15,7 +15,8 @@
     "max_steps": 25,
     "max_wall_clock_seconds": 900,
     "max_tool_retries": 2,
-    "max_tokens_budget": 400000
+    "max_tokens_budget": 400000,
+    "max_tool_result_chars": 20000
   },
   "permissions": {
     "default_tier": "auto",
