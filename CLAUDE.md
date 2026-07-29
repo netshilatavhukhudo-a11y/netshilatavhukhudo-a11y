@@ -4,11 +4,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Purpose
 
-This is a **GitHub profile repository** — the README.md is displayed publicly on the owner's GitHub profile page (`github.com/netshilatavhukhudo-a11y`). It contains no application code, build system, or dependencies. The sole deliverable is `README.md`.
+This is a **GitHub profile repository** — the README.md is displayed publicly on the owner's GitHub profile page (`github.com/netshilatavhukhudo-a11y`). It has no application code, package manager, or build system.
 
-## No Build or Test Commands
+It has two deliverables:
 
-There are no package.json, Makefile, or build scripts. Nothing to install, compile, lint, or test. Changes take effect by committing and pushing `README.md`.
+- `README.md` — the public profile page.
+- Whop CLI setup tooling — `install.sh` (a POSIX `sh` installer for the `@whop/cli` npm package) and `SETUP.md` (how to run that CLI from Claude Code, covering the cloud network allowlist and `WHOP_API_KEY` authentication).
+
+## Build, Lint & Test Commands
+
+There is no package.json, Makefile, or build script, and nothing to compile. Changes take effect by committing and pushing.
+
+`install.sh` is executable code and **is** linted — CI runs ShellCheck against it on every push and pull request that touches a shell script:
+
+```sh
+shellcheck --shell=sh install.sh
+```
+
+Run that locally before pushing changes to `install.sh`. There is no test suite.
 
 ## README.md Structure & Conventions
 
@@ -31,4 +44,7 @@ The README references two external repositories owned by the same user. Do not m
 
 ## Development Branch
 
-Active work happens on `claude/claude-md-docs-VnAYm`. Push changes there.
+The default branch is `main`. Do not commit to it directly — work on a feature
+branch and open a pull request against `main`, which is how every change in this
+repo's history has landed. Naming a specific working branch here goes stale as
+soon as that branch merges, so check `git branch` for the branch in play.
