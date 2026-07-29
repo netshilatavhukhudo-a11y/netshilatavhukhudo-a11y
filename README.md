@@ -93,7 +93,7 @@ Data-driven market intelligence platform that processes multi-source financial d
 ![GitHub Contribution Grid](https://ghchart.rshah.org/FF6B6B/netshilatavhukhudo-a11y)
 
 <img src="https://github-readme-stats.vercel.app/api?username=netshilatavhukhudo-a11y&show_icons=true&theme=radical&hide_border=true&bg_color=0D1117&title_color=FF6B6B&icon_color=FF6B6B&text_color=C9D1D9" width="49%" />
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=netshilatavhukhudo-a11y&theme=radical&hide_border=true&background=0D1117&ring=FF6B6B&fire=FF6B6B&currStreakLabel=FF6B6B" width="49%" />
+<img src="https://streak-stats.demolab.com/?user=netshilatavhukhudo-a11y&theme=radical&hide_border=true&background=0D1117&ring=FF6B6B&fire=FF6B6B&currStreakLabel=FF6B6B" width="49%" />
 
 ![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=netshilatavhukhudo-a11y&layout=compact&theme=radical&hide_border=true&bg_color=0D1117&title_color=FF6B6B&text_color=C9D1D9)
 
