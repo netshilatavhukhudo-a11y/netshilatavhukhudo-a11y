@@ -56,8 +56,17 @@ if ! command -v npm >/dev/null 2>&1; then
   fail "npm is not installed. It normally ships with Node.js — reinstall Node.js from https://nodejs.org."
 fi
 
-NODE_VERSION="$(node -v)"                       # e.g. v22.22.2
-NODE_MAJOR="$(echo "$NODE_VERSION" | sed 's/^v//; s/\..*//')"
+NODE_VERSION="$(node -v 2>/dev/null | head -n 1)"   # e.g. v22.22.2
+NODE_MAJOR="$(printf '%s' "$NODE_VERSION" | sed 's/^v//; s/[^0-9].*//')"
+
+# Guard the comparison below: `[ "$x" -lt N ]` with a non-numeric $x is an
+# error, not a false result, and an error here would skip the version check
+# entirely rather than stop the install.
+case "$NODE_MAJOR" in
+  '' | *[!0-9]*)
+    fail "Could not read a Node.js major version from 'node -v' (got: '${NODE_VERSION:-no output}'). Install Node.js >= ${MIN_NODE_MAJOR} from https://nodejs.org and re-run this script."
+    ;;
+esac
 
 if [ "$NODE_MAJOR" -lt "$MIN_NODE_MAJOR" ]; then
   fail "Node.js ${NODE_VERSION} found, but the Whop CLI requires Node.js >= ${MIN_NODE_MAJOR}. Please upgrade."
@@ -76,7 +85,15 @@ fi
 
 # --- Verify ----------------------------------------------------------------
 if command -v whop >/dev/null 2>&1; then
-  ok "Whop CLI ready: $(whop --version)"
+  # Report the version only if the binary actually runs — a failing
+  # `whop --version` inside the success message would otherwise be swallowed
+  # and print a confident "ready:" line with nothing after it.
+  WHOP_VERSION="$(whop --version 2>/dev/null | head -n 1 || true)"
+  if [ -n "$WHOP_VERSION" ]; then
+    ok "Whop CLI ready: ${WHOP_VERSION}"
+  else
+    warn "'whop' is on your PATH, but 'whop --version' returned nothing — the install may be incomplete. Try re-running this script, or 'npm install -g ${PACKAGE}' directly."
+  fi
   info "Next step: run 'whop quickstart' to get started."
   info "Note: CLI commands reach Whop at api.whop.com — if that host is blocked"
   info "      (HTTP_403 'Host not in allowlist'), allowlist it or use an unrestricted machine."
