@@ -49,14 +49,23 @@ _EXIT: dict[str, int] = {
 }
 
 
-def _list_tools(config: dict) -> int:
+def _tier_label(name: str, config: dict) -> str:
+    """A readable tier summary: a single tier, or the per-action breakdown."""
     from nexus.permissions import resolve_tier
+
+    table = config["permissions"]["tool_tiers"]
+    subkeys = sorted(k for k in table if k.startswith(f"{name}.") and not k.endswith(".*"))
+    if not subkeys:
+        return resolve_tier(name, {}, config).tier
+    return ", ".join(f"{k.split('.', 1)[1]}={table[k]}" for k in subkeys)
+
+
+def _list_tools(config: dict) -> int:
     from nexus.registry import export_schemas, load_tools
 
     loaded, skipped = load_tools(config["enabled_tools"])
     for schema in export_schemas(loaded):
-        tier = resolve_tier(schema["name"], {}, config).tier
-        print(f"\n=== {schema['name']}  [tier: {tier}] ===")
+        print(f"\n=== {schema['name']}  [tier: {_tier_label(schema['name'], config)}] ===")
         print(schema["description"])
         print(json.dumps(schema["input_schema"], indent=2))
     for name, reason in skipped.items():

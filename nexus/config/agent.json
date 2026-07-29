@@ -36,6 +36,7 @@
       "file_ops.read": "auto",
       "file_ops.write": "confirm",
       "file_ops.delete": "block",
+      "calculator": "auto",
       "payments.*": "block",
       "live_pricing.*": "block"
     }
@@ -47,6 +48,7 @@
     "code_exec",
     "http_request",
     "file_ops",
-    "memory_tool"
+    "memory_tool",
+    "calculator"
   ]
 }

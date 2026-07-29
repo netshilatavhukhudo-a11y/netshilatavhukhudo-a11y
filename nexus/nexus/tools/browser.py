@@ -151,6 +151,27 @@ def _launch(pw):
         ) from exc
 
 
+def _navigate(page, url: str) -> None:
+    """Go to `url`, tolerating the transient left by a prior failed navigation.
+
+    Because the browser page is persistent, a goto that failed on the previous
+    call (a dead host, an unsafe port) can still be settling onto an internal
+    chrome-error page when the next goto starts, which Playwright reports as
+    'interrupted by another navigation'. That is not a failure of *this*
+    navigation — wait for the page to quiesce and try once more.
+    """
+    try:
+        page.goto(url, wait_until="domcontentloaded")
+    except Exception as exc:  # noqa: BLE001 - re-raised or retried below
+        if "interrupted by another navigation" not in str(exc):
+            raise
+        try:
+            page.wait_for_load_state("domcontentloaded", timeout=_ACTION_TIMEOUT_MS)
+        except Exception:  # noqa: BLE001 - best effort; the retry is the real fix
+            pass
+        page.goto(url, wait_until="domcontentloaded")
+
+
 def _run_action(inp: dict) -> str:
     """Perform one action on the persistent page."""
     action = inp["action"]
@@ -166,7 +187,7 @@ def _run_action(inp: dict) -> str:
     # Navigate if a url was given; otherwise stay on the current page so a
     # multi-step flow (fill -> click) operates where the last step left off.
     if requested_url:
-        page.goto(requested_url, wait_until="domcontentloaded")
+        _navigate(page, requested_url)
     elif page.url in ("", "about:blank"):
         raise ToolError(
             f"action={action!r} needs a page to act on. Do a 'goto' first, or "

@@ -106,6 +106,16 @@ def run(goal: str, config: dict[str, Any]) -> RunResult:
     model_cfg = config["model"]
 
     loaded, skipped = load_tools(config["enabled_tools"])
+
+    trace(
+        "run_start",
+        {
+            "goal": goal,
+            "planner_model": model_cfg["planner_model"],
+            "enabled_tools": loaded,
+            "limits": limits,
+        },
+    )
     if skipped:
         trace("error", {"unavailable_tools": skipped})
 

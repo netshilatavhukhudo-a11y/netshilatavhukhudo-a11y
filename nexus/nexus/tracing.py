@@ -144,22 +144,17 @@ def current_tracer() -> Tracer:
 
 
 def start_run(goal: str, config: dict[str, Any]) -> Tracer:
-    """Begin a new run: rotate in a fresh tracer and log the opening event."""
+    """Rotate in a fresh tracer and print the console banner for a new run.
+
+    The `run_start` / `run_end` framing events are emitted by the orchestrator
+    itself (see `orchestrator.run`), so a run is self-framing whether it is
+    launched from the CLI or called directly — this only sets up the sink.
+    """
     global _active
     if _active is not None:
         _active.close()
     _active = Tracer()
     _active.rule(f"{config.get('identity', {}).get('name', 'NEXUS')} · {_active.run_id}")
-    _active.write(
-        "run_start",
-        {
-            "goal": goal,
-            "planner_model": config["model"]["planner_model"],
-            "enabled_tools": config["enabled_tools"],
-            "limits": config["limits"],
-            "trace_file": str(_active.path),
-        },
-    )
     return _active
 
 
