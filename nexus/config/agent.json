@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "name": "NEXUS",
+    "role": "General-purpose autonomous agent.",
+    "operator": "Dollar Shark"
+  },
+  "model": {
+    "planner_model": "claude-opus-5",
+    "worker_model": "claude-haiku-4-5",
+    "max_tokens": 4096,
+    "effort": "high",
+    "thinking": "adaptive"
+  },
+  "limits": {
+    "max_steps": 25,
+    "max_wall_clock_seconds": 900,
+    "max_tool_retries": 2,
+    "max_tokens_budget": 400000
+  },
+  "permissions": {
+    "default_tier": "auto",
+    "tiers": {
+      "auto": "Reversible / read-only. Execute freely, no approval.",
+      "confirm": "Writes external state but reversible. Require human 'yes'.",
+      "block": "Irreversible or money-movement or live-price changes. Require explicit typed approval every time."
+    },
+    "tool_tiers": {
+      "web_search": "auto",
+      "web_fetch": "auto",
+      "browser.read": "auto",
+      "browser.submit_form": "confirm",
+      "code_exec": "confirm",
+      "http_request.GET": "auto",
+      "http_request.POST": "confirm",
+      "file_ops.read": "auto",
+      "file_ops.write": "confirm",
+      "file_ops.delete": "block",
+      "payments.*": "block",
+      "live_pricing.*": "block"
+    }
+  },
+  "enabled_tools": [
+    "web_search",
+    "web_fetch",
+    "browser",
+    "code_exec",
+    "http_request",
+    "file_ops",
+    "memory_tool"
+  ]
+}
