@@ -1,0 +1,6 @@
+# launchwatch writes its trade journal to the working directory
+launch.db
+
+# Python
+__pycache__/
+*.py[cod]

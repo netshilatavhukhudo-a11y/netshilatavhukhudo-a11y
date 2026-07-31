@@ -1,0 +1,19 @@
+# Lint config for launchwatch/, the only Python in this repo.
+#
+# The rule set is stated explicitly rather than left to Ruff's defaults so that
+# a local run and the CI run (.github/workflows/python.yml) agree. CI pins the
+# Ruff version for the same reason — defaults shift between releases.
+
+target-version = "py311"
+line-length = 100
+
+[lint]
+select = [
+    "E",      # pycodestyle
+    "F",      # pyflakes
+    "I",      # import sorting
+    "B",      # bugbear
+    "SIM",    # simplify
+    "BLE",    # blind except
+    "RUF",    # ruff-specific
+]
