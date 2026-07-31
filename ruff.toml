@@ -1,0 +1,20 @@
+# Pin the rule set to the repo. Relying on Ruff's implicit defaults let CI
+# lint with a broader selection than a local `ruff check .` did, so a clean
+# local run still failed the build. Everything below is explicit for that
+# reason — change it here and both sides move together.
+
+line-length = 88
+target-version = "py39"
+
+[lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # import sorting
+    "UP",   # pyupgrade
+    "B",    # bugbears
+    "SIM",  # simplifications
+    "EXE",  # shebang/executable-bit agreement
+    "BLE",  # blind excepts
+]
