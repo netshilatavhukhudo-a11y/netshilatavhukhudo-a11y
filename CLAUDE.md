@@ -25,6 +25,10 @@ ruff check .                       # .github/workflows/ruff.yml, ruff pinned to 
 
 Run the relevant one locally before pushing. There is no test suite.
 
+The Ruff rule set is pinned in `ruff.toml`. Do not delete it and fall back to
+Ruff's implicit defaults: CI resolved a broader selection than a local run did,
+so a clean local `ruff check .` still failed the build.
+
 `launchwatch.py` targets the stdlib plus `websockets` (imported lazily, so
 `python launchwatch.py report <MINT>` works without it). It writes a
 `launch.db` SQLite journal into the working directory; that file is

@@ -267,10 +267,14 @@ class LaunchMonitor:
                             msg = json.loads(raw)
                         except json.JSONDecodeError:
                             continue
-                        if isinstance(msg, dict) and msg.get("mint") == self.mint:
-                            if msg.get("txType") in ("buy", "sell"):
-                                self.on_trade(msg)
-            except Exception as e:
+                        if (isinstance(msg, dict)
+                                and msg.get("mint") == self.mint
+                                and msg.get("txType") in ("buy", "sell")):
+                            self.on_trade(msg)
+            # Deliberately blind: during a launch, staying connected beats
+            # diagnosing precisely. Anything the socket raises should reconnect
+            # rather than kill the journal this whole thing exists to produce.
+            except Exception as e:  # noqa: BLE001
                 log.warning("disconnected (%s), retry in %ds", e, backoff)
                 await asyncio.sleep(backoff)
                 backoff = min(backoff * 2, 60)
