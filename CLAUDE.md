@@ -6,22 +6,32 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **GitHub profile repository** — the README.md is displayed publicly on the owner's GitHub profile page (`github.com/netshilatavhukhudo-a11y`). It has no application code, package manager, or build system.
 
-It has two deliverables:
+It has three deliverables:
 
 - `README.md` — the public profile page.
 - Whop CLI setup tooling — `install.sh` (a POSIX `sh` installer for the `@whop/cli` npm package) and `SETUP.md` (how to run that CLI from Claude Code, covering the cloud network allowlist and `WHOP_API_KEY` authentication).
+- `launchwatch/` — a standalone Python tool and its accompanying document: `launchwatch.py` (a read-only monitor that journals a token launch's trades to SQLite so creator-wallet activity is provable), `PLAYBOOK.md`, and a `README.md` for the directory. This is the only Python in the repo and the only part with a runtime dependency (`websockets`, pinned in `launchwatch/requirements.txt`). It is not referenced from the profile `README.md` — keep it that way unless asked.
 
 ## Build, Lint & Test Commands
 
-There is no package.json, Makefile, or build script, and nothing to compile. Changes take effect by committing and pushing.
+There is no package.json, Makefile, or build script. Changes to the Markdown take effect by committing and pushing.
 
-`install.sh` is executable code and **is** linted — CI runs ShellCheck against it on every push and pull request that touches a shell script:
+Both executable pieces **are** linted, each by its own workflow, on every push and pull request that touches a matching file. There is no test suite.
+
+`install.sh` — CI runs ShellCheck (`.github/workflows/shellcheck.yml`):
 
 ```sh
 shellcheck --shell=sh install.sh
 ```
 
-Run that locally before pushing changes to `install.sh`. There is no test suite.
+`launchwatch/launchwatch.py` — CI runs a syntax check and Ruff (`.github/workflows/python.yml`):
+
+```sh
+python3 -m compileall -q launchwatch
+ruff check .
+```
+
+Run the relevant command locally before pushing.
 
 ## README.md Structure & Conventions
 

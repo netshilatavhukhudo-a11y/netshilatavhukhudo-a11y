@@ -1,0 +1,35 @@
+name: Lint Python
+
+on:
+  push:
+    paths:
+      - "**.py"
+      - ".github/workflows/python.yml"
+  pull_request:
+    paths:
+      - "**.py"
+      - ".github/workflows/python.yml"
+
+# Least privilege: linting only needs to read the checkout.
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # actions/checkout v5.1.0, pinned to its commit SHA
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+
+      # Python ships preinstalled on GitHub's ubuntu-latest runners, so no
+      # setup action is needed — same reasoning as the ShellCheck workflow.
+      - name: Syntax check
+        run: |
+          python3 --version
+          python3 -m compileall -q launchwatch
+
+      - name: Run Ruff
+        run: |
+          python3 -m pip install --quiet ruff
+          ruff check .
