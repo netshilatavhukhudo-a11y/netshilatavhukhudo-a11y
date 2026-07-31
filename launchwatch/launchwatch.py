@@ -180,11 +180,11 @@ class LaunchMonitor:
                 self.alerts_fired.add(key)
                 level(msg)
 
-        n_snipers, sniper_pct, _sniper_supply_pct, extracted = self.sniper_stats()
+        n_snipers, sniper_pct, _supply_pct, extracted = self.sniper_stats()
         if sniper_pct > 25:
-            fire("snipers", f"~{sniper_pct:.0f}% of supply is held by wallets "
-                            f"that bought in the first {SNIPER_WINDOW_SECONDS}s. "
-                            f"They will exit into your community.")
+            fire("snipers", f"{n_snipers} wallets that bought in the first "
+                            f"{SNIPER_WINDOW_SECONDS}s hold ~{sniper_pct:.0f}% "
+                            f"of supply. They will exit into your community.")
         if self.top10_pct() > CONCENTRATION_ALERT * 100:
             fire("concentration",
                  f"top 10 wallets hold {self.top10_pct():.0f}% — one exit "
@@ -260,12 +260,17 @@ class LaunchMonitor:
                             msg = json.loads(raw)
                         except json.JSONDecodeError:
                             continue
-                        if isinstance(msg, dict) and msg.get("mint") == self.mint:
-                            if msg.get("txType") in ("buy", "sell"):
-                                self.on_trade(msg)
+                        if (isinstance(msg, dict)
+                                and msg.get("mint") == self.mint
+                                and msg.get("txType") in ("buy", "sell")):
+                            self.on_trade(msg)
             except asyncio.CancelledError:
                 raise
-            except Exception as e:
+            # Deliberately broad: this is the reconnect supervisor. Any failure
+            # — socket drop, protocol error, malformed frame — must reconnect
+            # rather than kill the monitor mid-launch. Cancellation is re-raised
+            # above so shutdown still works.
+            except Exception as e:  # noqa: BLE001
                 log.warning("disconnected (%s), retry in %ds", e, backoff)
                 await asyncio.sleep(backoff)
                 backoff = min(backoff * 2, 60)
@@ -312,7 +317,7 @@ def report(mint: str):
                 " ORDER BY 3 DESC LIMIT 10", (mint,)):
             pnl = (sol_out or 0) - (sol_in or 0)
             print(f"    {w[:10]}…  in {sol_in or 0:>6.2f}  out {sol_out or 0:>6.2f}"
-                  f"  net {pnl:>+7.2f} SOL")
+                  f"  net {pnl:>+7.2f} SOL  ({buys or 0}b/{sells or 0}s)")
         print()
     finally:
         db.close()

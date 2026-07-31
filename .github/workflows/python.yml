@@ -29,7 +29,11 @@ jobs:
           python3 --version
           python3 -m compileall -q launchwatch
 
+      # Pinned: an unpinned install makes this gate non-reproducible, since a
+      # new Ruff release can add rules to the default set and turn the build red
+      # without the code changing. Bump deliberately.
       - name: Run Ruff
         run: |
-          python3 -m pip install --quiet ruff
-          ruff check .
+          python3 -m pip install --quiet ruff==0.16.1
+          python3 -m ruff --version
+          python3 -m ruff check .
