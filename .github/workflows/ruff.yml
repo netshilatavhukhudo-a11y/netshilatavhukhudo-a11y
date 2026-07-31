@@ -1,0 +1,31 @@
+name: Lint Python
+
+on:
+  push:
+    paths:
+      - "**.py"
+      - ".github/workflows/ruff.yml"
+  pull_request:
+    paths:
+      - "**.py"
+      - ".github/workflows/ruff.yml"
+
+# Least privilege: linting only needs to read the checkout.
+permissions:
+  contents: read
+
+jobs:
+  ruff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # actions/checkout v5.1.0, pinned to its commit SHA
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+
+      # Ruff is not preinstalled on the runners, so pin the version rather
+      # than pulling whatever is latest on the day CI happens to run.
+      - name: Run Ruff
+        run: |
+          pip install --disable-pip-version-check ruff==0.16.1
+          ruff --version
+          ruff check .

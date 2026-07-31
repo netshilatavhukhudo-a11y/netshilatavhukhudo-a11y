@@ -6,22 +6,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **GitHub profile repository** — the README.md is displayed publicly on the owner's GitHub profile page (`github.com/netshilatavhukhudo-a11y`). It has no application code, package manager, or build system.
 
-It has two deliverables:
+It has three deliverables:
 
 - `README.md` — the public profile page.
 - Whop CLI setup tooling — `install.sh` (a POSIX `sh` installer for the `@whop/cli` npm package) and `SETUP.md` (how to run that CLI from Claude Code, covering the cloud network allowlist and `WHOP_API_KEY` authentication).
+- Token launch tooling — `CLEAN_LAUNCH_PLAYBOOK.md` (a harm-reduction playbook for launching a memecoin without rugging) and `launchwatch.py` (a monitor that journals every trade, flags sniper wallets, and publicly logs creator-wallet sells as proof the creator is not selling). Not linked from `README.md` — it is deliberately kept off the public profile page.
 
 ## Build, Lint & Test Commands
 
 There is no package.json, Makefile, or build script, and nothing to compile. Changes take effect by committing and pushing.
 
-`install.sh` is executable code and **is** linted — CI runs ShellCheck against it on every push and pull request that touches a shell script:
+The two executable files **are** linted in CI, each on every push and pull request that touches a file of that type:
 
 ```sh
-shellcheck --shell=sh install.sh
+shellcheck --shell=sh install.sh   # .github/workflows/shellcheck.yml
+ruff check .                       # .github/workflows/ruff.yml, ruff pinned to 0.16.1
 ```
 
-Run that locally before pushing changes to `install.sh`. There is no test suite.
+Run the relevant one locally before pushing. There is no test suite.
+
+`launchwatch.py` targets the stdlib plus `websockets` (imported lazily, so
+`python launchwatch.py report <MINT>` works without it). It writes a
+`launch.db` SQLite journal into the working directory; that file is
+gitignored and must never be committed.
 
 ## README.md Structure & Conventions
 

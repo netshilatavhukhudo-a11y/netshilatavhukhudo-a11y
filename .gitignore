@@ -1,0 +1,8 @@
+# launchwatch.py journals every trade to a local SQLite DB in the working
+# directory. That is launch evidence, not source — keep it out of git.
+launch.db
+launch.db-wal
+launch.db-shm
+
+__pycache__/
+*.py[cod]
